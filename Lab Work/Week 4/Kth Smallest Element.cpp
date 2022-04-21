@@ -1,66 +1,70 @@
 #include<iostream>
+#include<cstdlib>
 using namespace std;
-void countsort(int a[],int n,int k)
+
+void swap(int *n1,int *n2)
 {
-    int max=a[0],x=0,y=0;
-    for(int i=0;i<n;i++)
-    {
-        if(a[i]>max)
-        max=a[i];
-    }
-    int *q=new int[max+1];
-    for(int i=0;i<max+1;i++)
-    q[i]=0;
-    for(int i=0;i<n;i++)
-    q[a[i]]++;
-    for(int i=0;i<max+1;i++)
-    {
-        if(q[i]!=0)
-        {
-            x++;
-            if(x==k)
-            cout<<k<<"th smallest: "<<i<<endl;
-        }
-    }
-    for(int i=max;i>=0;i--)
-    {
-        if(q[i]!=0)
-        {
-            y++;
-            if(y==k)
-            cout<<k<<"th largest: "<<i<<endl;
-        }
-    }
-    int j=0;
-    for(int i=0;i<max+1;i++)
-    {
-        while(q[i]!=0)
-        {
-            a[j++]=i;
-            q[i]--;
-        }
-    }
+    int t=*n1;
+    *n1=*n2;
+    *n2=t;
 }
+
+int partition(int *a,int l,int r)
+{
+    int x=rand()%(r-l+1)+l;
+    swap(&a[x],&a[r]);
+    int pivot=a[r];
+    int i,j;
+    for(i=l-1,j=l;j<r;j++)
+    {
+        if(a[j]<pivot)
+        {
+            i++;
+            swap(&a[i],&a[j]);
+        }
+    }
+    swap(&a[i+1],&a[r]);
+    return (i+1);
+}
+
+int quick_sort(int *a,int l,int r,int k)
+{
+    if(l<r)
+    {
+        int pivot=partition(a,l,r);
+        if(pivot==k)
+        return a[pivot];
+        if(k<pivot)
+        return quick_sort(a,l,pivot-1,k);
+        else
+        return quick_sort(a,pivot+1,r,k);
+    }
+    return -1;
+}
+
 int main()
 {
-    int t,n;
-    int *p;
-    cout<<"Enter no of test cases"<<endl;
+    int t;
     cin>>t;
     while(t--)
     {
-        int k;
-        cout<<"Enter no of elements in array"<<endl;
+        int n,k;
         cin>>n;
-        p=new int[n];
-        cout<<"Enter elements of array"<<endl;
-        for(int i=0;i<n;i++)
-        cin>>p[i];
-        cout<<"Enter the value of k"<<endl;
+
+        int i;
+        int a[n];
+        for(i=0;i<n;i++)
+        cin>>a[i];
+
         cin>>k;
-        countsort(p,n,k);
-        
-        
-      
+
+        int ans=quick_sort(a,0,n-1,k-1);
+
+        if(ans==-1)
+        cout<<"not present\n";
+        else
+        cout<<ans<<endl;
     }
+    
+    return 0;
 }
